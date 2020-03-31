@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Анатолий Садовский](https://up.htmlacademy.ru/ecmascript/11/user/244373).
-* Наставник: `Неизвестно`.
+* Наставник: `Игорь Тараканов`.
 
 ---
 
