@@ -12,7 +12,7 @@ import {createFilmsTemplate} from './components/films.js';
 import {createFilmCardTemplate} from './components/filmCard.js';
 import {createFilmListShowMoreTemplate} from './components/showMore.js';
 import {createFilmDetailsTemplate} from './components/filmDetails.js';
-// import {createComment} from './components/comment.js';
+import {createComment} from './components/comment.js';
 
 // Моки
 import {generateNavigation} from './mock/generateNavigationItems.js';
@@ -24,9 +24,9 @@ const navigationItems = generateNavigation();
 const sortItems = generateSortItems();
 const userProfile = generateUserProfile();
 const filmCards = generateFilmCards(CARD_RENDER_COUNT);
-const filnCardsSortByDefault = filmCards;
-const filmCardsSortByRating = filmCards.sort((a, b) => b.rating - a.rating);
-const filmCardsSortByComments = filmCards.sort((a, b) => b.comments.length - a.comments.length);
+const filnCardsSortByDefault = filmCards.slice();
+const filmCardsSortByRating = filmCards.sort((a, b) => b.rating - a.rating).slice();
+const filmCardsSortByComments = filmCards.sort((a, b) => b.comments.length - a.comments.length).slice();
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -49,28 +49,33 @@ const filmsListExtra = films.querySelectorAll(`.films-list--extra`);
 const filmsListContainerTopRated = filmsListExtra[0].querySelector(`.films-list__container`);
 const filmsListContainerMostCommented = filmsListExtra[1].querySelector(`.films-list__container`);
 
-let renderCardCount = CARD_RENDER_COUNT_ON_START;
+const renderFilmCardGalery = (sortCardArray) => {
 
-filnCardsSortByDefault.slice(0, renderCardCount).forEach((card) => render(filmsListContainer, createFilmCardTemplate(card))); // Отрисовка карточек с фильмами
+  let renderCardCount = CARD_RENDER_COUNT_ON_START;
 
-render(filmsList, createFilmListShowMoreTemplate()); // Отрисовка кнопки "Показать больше"
+  sortCardArray.slice(0, renderCardCount).forEach((card) => render(filmsListContainer, createFilmCardTemplate(card))); // Отрисовка карточек с фильмами
+
+  render(filmsList, createFilmListShowMoreTemplate()); // Отрисовка кнопки "Показать больше"
+
+  const filmListShowMore = filmsList.querySelector(`.films-list__show-more`);
+
+  filmListShowMore.addEventListener(`click`, () => {
+    const prevRenderCount = renderCardCount;
+    renderCardCount += CARD_RENDER_COUNT_BY_BUTTON;
+
+    sortCardArray.slice(prevRenderCount, renderCardCount).forEach((card) => render(filmsListContainer, createFilmCardTemplate(card)));
+
+    if (renderCardCount >= sortCardArray.length) {
+      filmListShowMore.remove();
+    }
+  });
+};
+
+renderFilmCardGalery(filnCardsSortByDefault);
 
 filmCardsSortByRating.slice(0, TOP_RATED_CARD_RENDER_COUNT).forEach((card) => render(filmsListContainerTopRated, createFilmCardTemplate(card)));
 
 filmCardsSortByComments.slice(0, MOST_COMMENTED_CARD_RENDER_COUNT).forEach((card) => render(filmsListContainerMostCommented, createFilmCardTemplate(card)));
-
-const filmListShowMore = filmsList.querySelector(`.films-list__show-more`);
-
-filmListShowMore.addEventListener(`click`, () => {
-  const prevRenderCount = renderCardCount;
-  renderCardCount += CARD_RENDER_COUNT_BY_BUTTON;
-
-  filnCardsSortByDefault.slice(prevRenderCount, renderCardCount).forEach((card) => render(filmsListContainer, createFilmCardTemplate(card)));
-
-  if (renderCardCount >= filnCardsSortByDefault.length) {
-    filmListShowMore.remove();
-  }
-});
 
 const filmCardPoster = filmsList.querySelector(`.film-card__poster`);
 
@@ -78,9 +83,9 @@ filmCardPoster.addEventListener(`click`, () => {
   render(body, createFilmDetailsTemplate(filnCardsSortByDefault[0])); // Отрисовка попапа с детальным описанием фильма
 
   const filmDetails = body.querySelector(`.film-details`);
-  // const filmDetailsCommentsList = filmDetails.querySelector(`.film-details__comments-list`);
+  const filmDetailsCommentsList = filmDetails.querySelector(`.film-details__comments-list`);
 
-  // filnCardsSortByDefault[0].comments.slice(0, filnCardsSortByDefault[0].comments.length).forEach((comment) => render(filmDetailsCommentsList, createComment(comment)));
+  filnCardsSortByDefault[0].comments.slice(0, filnCardsSortByDefault[0].comments.length).forEach((comment) => render(filmDetailsCommentsList, createComment(comment)));
 
 
   const filmDetailsCloseBtn = body.querySelector(`.film-details__close-btn`);

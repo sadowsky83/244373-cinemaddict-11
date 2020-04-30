@@ -10,7 +10,7 @@ const createFilmCardControl = () => {
 
 const lengthCheck = (text) => {
   if (text.length > 140) {
-    return (text.splice(0, 138) + `...`);
+    return (text.slice(0, 138) + `...`);
   } else {
     return text;
   }
@@ -26,11 +26,11 @@ export const createFilmCardTemplate = (filmCard) => {
       <p class="film-card__rating">${filmCard.rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${filmCard.year}</span>
-        <span class="film-card__duration">${lengthCheck(filmCard.duration)}</span>
+        <span class="film-card__duration">${filmCard.duration}</span>
         <span class="film-card__genre">${filmCard.gentres[0]}</span>
       </p>
       <img src="./images/posters/${filmCard.poster}" alt="" class="film-card__poster">
-      <p class="film-card__description">${filmCard.discription}</p>
+      <p class="film-card__description">${lengthCheck(filmCard.description)}</p>
       <a class="film-card__comments">${filmCard.comments.length} comments</a>
       ${filmCardControl}
     </article>`

@@ -53,7 +53,8 @@ const createNoCommentsBlock = () => {
 
 const createCommentsBlock = () => {
   return (
-    `<div class="film-details__new-comment">
+    `<ul class="film-details__comments-list"></ul>
+    <div class="film-details__new-comment">
       <div for="add-emoji" class="film-details__add-emoji-label"></div>
 
       <label class="film-details__comment-label">
@@ -164,7 +165,7 @@ export const createFilmDetailsTemplate = (filmCard) => {
               </table>
 
               <p class="film-details__film-description">
-                ${filmCard.discription}
+                ${filmCard.description}
               </p>
             </div>
           </div>
