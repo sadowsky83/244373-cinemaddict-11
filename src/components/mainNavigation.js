@@ -1,10 +1,12 @@
+import {createElement} from '../utils.js';
+
 const createNavigationItem = (name, href, count) => {
   return (
     `<a href="#${href}" class="main-navigation__item">${name} <span class="main-navigation__item-count">${count}</span></a>`
   );
 };
 
-export const createMainNavigationTemplate = (items) => {
+const createMainNavigationTemplate = (items) => {
   const navigationItems = items.map((it) => createNavigationItem(it.name, it.href, it.count)).join(`\n`);
   return (
     `<nav class="main-navigation">
@@ -16,3 +18,27 @@ export const createMainNavigationTemplate = (items) => {
     </nav>`
   );
 };
+
+export default class MainNavigationComponent {
+  constructor(items) {
+    this._items = items;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMainNavigationTemplate(this._items);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
