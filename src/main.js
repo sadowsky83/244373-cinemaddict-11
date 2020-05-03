@@ -12,6 +12,7 @@ import FilmsComponent from './components/films.js';
 import FilmCardComponent from './components/filmCard.js';
 import ShowMoreComponent from './components/showMore.js';
 import FilmDetailsComponent from './components/filmDetails.js';
+import NoFilmsComponent from './components/noFilms.js';
 
 // Моки
 import {generateNavigation} from './mock/generateNavigationItems.js';
@@ -55,10 +56,24 @@ const renderCards = (cardsArray, container) => {
 
     cardComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, () => {
       render(body, detailsComponent.getElement(), RenderPosition.BEFOREEND); // Отрисовка попапа с детальным описанием фильма
+      document.addEventListener(`keydown`, onEscKeyDown);
     });
 
+    const removeDetailsComponent = () => {
+      detailsComponent.removeElement();
+    };
+
+    const onEscKeyDown = (evt) => {
+      const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+      if (isEscKey) {
+        removeDetailsComponent();
+        document.removeEventListener(`keydown`, onEscKeyDown);
+      }
+    };
+
     detailsComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, () => {
-      detailsComponent.removeElement(); // Удаление попапа
+      removeDetailsComponent(); // Удаление попапа
     });
   });
 };
@@ -67,8 +82,7 @@ const renderFilmCardGalery = (cardsArray) => {
 
   let renderCardCount = CARD_RENDER_COUNT_ON_START;
 
-  renderCards(cardsArray.slice(0, renderCardCount), filmsListContainer);
-
+  renderCards(cardsArray.slice(0, renderCardCount), filmsListContainer); // Отрисовка основной галлереи
   render(filmsList, new ShowMoreComponent().getElement(), RenderPosition.BEFOREEND); // Отрисовка кнопки "Показать больше"
 
   const filmListShowMore = filmsList.querySelector(`.films-list__show-more`);
@@ -85,8 +99,17 @@ const renderFilmCardGalery = (cardsArray) => {
   });
 };
 
-renderFilmCardGalery(filmCardsSortByDefault);
+const renderMainGallery = () => {
+  if (filmCards.length === 0) {
+    render(main, new NoFilmsComponent().getElement(), RenderPosition.BEFOREEND);
+    return;
+  } else {
+    renderFilmCardGalery(filmCardsSortByDefault);
 
-renderCards(filmCardsSortByRating.slice(0, TOP_RATED_CARD_RENDER_COUNT), filmsListContainerTopRated);
+    renderCards(filmCardsSortByRating.slice(0, TOP_RATED_CARD_RENDER_COUNT), filmsListContainerTopRated);
 
-renderCards(filmCardsSortByComments.slice(0, MOST_COMMENTED_CARD_RENDER_COUNT), filmsListContainerMostCommented);
+    renderCards(filmCardsSortByComments.slice(0, MOST_COMMENTED_CARD_RENDER_COUNT), filmsListContainerMostCommented);
+  }
+};
+
+renderMainGallery();
