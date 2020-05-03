@@ -88,10 +88,12 @@ const renderFilmCardGalery = (cardsArray) => {
   const filmListShowMore = filmsList.querySelector(`.films-list__show-more`);
 
   filmListShowMore.addEventListener(`click`, () => {
+
     const prevRenderCount = renderCardCount;
+
     renderCardCount += CARD_RENDER_COUNT_BY_BUTTON;
 
-    renderCards(cardsArray.slice(0, prevRenderCount), filmsListContainer);
+    renderCards(cardsArray.slice(prevRenderCount, renderCardCount), filmsListContainer);
 
     if (renderCardCount >= cardsArray.length) {
       filmListShowMore.remove();
