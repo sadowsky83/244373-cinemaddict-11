@@ -1,18 +1,17 @@
 const CARD_RENDER_COUNT = 20; // Количество карточек с фильмами
-const CARD_RENDER_COUNT_ON_START = 5;
-const CARD_RENDER_COUNT_BY_BUTTON = 5;
+const CARD_RENDER_COUNT_ON_START = 5; // Количество отрисованных карточек при загрузке
+const CARD_RENDER_COUNT_BY_BUTTON = 5; // Количество карточек, добавляемых при нажатии load more
 const TOP_RATED_CARD_RENDER_COUNT = 2; // Количество карточек в блоке топ рейтинг
 const MOST_COMMENTED_CARD_RENDER_COUNT = 2; // Количество карточек в блоке самые комментируемые
 
 // Компоненты
-import {createHeaderProfileTemplate} from './components/headerProfile.js';
-import {createMainNavigationTemplate} from './components/mainNavigation.js';
-import {createSortTemplate} from './components/sort.js';
-import {createFilmsTemplate} from './components/films.js';
-import {createFilmCardTemplate} from './components/filmCard.js';
-import {createFilmListShowMoreTemplate} from './components/showMore.js';
-import {createFilmDetailsTemplate} from './components/filmDetails.js';
-import {createComment} from './components/comment.js';
+import HeaderProfileComponent from './components/headerProfile.js';
+import MainNavigationComponent from './components/mainNavigation.js';
+import SortComponent from './components/sort.js';
+import FilmsComponent from './components/films.js';
+import FilmCardComponent from './components/filmCard.js';
+import ShowMoreComponent from './components/showMore.js';
+import FilmDetailsComponent from './components/filmDetails.js';
 
 // Моки
 import {generateNavigation} from './mock/generateNavigationItems.js';
@@ -20,27 +19,25 @@ import {generateSortItems} from './mock/generateSortItems.js';
 import {generateUserProfile} from './mock/user.js';
 import {generateFilmCards} from './mock/filmCard.js';
 
+// Утилки
+import {render, RenderPosition} from './utils.js';
+
 const navigationItems = generateNavigation();
 const sortItems = generateSortItems();
 const userProfile = generateUserProfile();
 const filmCards = generateFilmCards(CARD_RENDER_COUNT);
-const filnCardsSortByDefault = filmCards.slice();
+const filmCardsSortByDefault = filmCards.slice();
 const filmCardsSortByRating = filmCards.sort((a, b) => b.rating - a.rating).slice();
 const filmCardsSortByComments = filmCards.sort((a, b) => b.comments.length - a.comments.length).slice();
-
-const render = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
-};
 
 const body = document.querySelector(`body`);
 const header = body.querySelector(`header`);
 const main = body.querySelector(`main`);
 
-
-render(header, createHeaderProfileTemplate(userProfile)); // Отрисовка профиля
-render(main, createMainNavigationTemplate(navigationItems)); // Отрисовка блока навигации
-render(main, createSortTemplate(sortItems)); // Отрисовка блока сортировки
-render(main, createFilmsTemplate()); // Отрисовка блока карточек фильмов
+render(header, new HeaderProfileComponent(userProfile).getElement(), RenderPosition.BEFOREEND); // Отрисовка профиля
+render(main, new MainNavigationComponent(navigationItems).getElement(), RenderPosition.BEFOREEND); // Отрисовка блока навигации
+render(main, new SortComponent(sortItems).getElement(), RenderPosition.BEFOREEND); // Отрисовка блока сортировки
+render(main, new FilmsComponent().getElement(), RenderPosition.BEFOREEND); // Отрисовка блока карточек фильмов
 
 const films = main.querySelector(`.films`);
 const filmsList = films.querySelector(`.films-list`);
@@ -49,13 +46,30 @@ const filmsListExtra = films.querySelectorAll(`.films-list--extra`);
 const filmsListContainerTopRated = filmsListExtra[0].querySelector(`.films-list__container`);
 const filmsListContainerMostCommented = filmsListExtra[1].querySelector(`.films-list__container`);
 
-const renderFilmCardGalery = (sortCardArray) => {
+const renderCards = (cardsArray, container) => {
+  cardsArray.forEach((card) => {
+    const cardComponent = new FilmCardComponent(card);
+    const detailsComponent = new FilmDetailsComponent(card);
+
+    render(container, cardComponent.getElement(), RenderPosition.BEFOREEND); // Отрисовка карточек из массива
+
+    cardComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, () => {
+      render(body, detailsComponent.getElement(), RenderPosition.BEFOREEND); // Отрисовка попапа с детальным описанием фильма
+    });
+
+    detailsComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, () => {
+      detailsComponent.removeElement(); // Удаление попапа
+    });
+  });
+};
+
+const renderFilmCardGalery = (cardsArray) => {
 
   let renderCardCount = CARD_RENDER_COUNT_ON_START;
 
-  sortCardArray.slice(0, renderCardCount).forEach((card) => render(filmsListContainer, createFilmCardTemplate(card))); // Отрисовка карточек с фильмами
+  renderCards(cardsArray.slice(0, renderCardCount), filmsListContainer);
 
-  render(filmsList, createFilmListShowMoreTemplate()); // Отрисовка кнопки "Показать больше"
+  render(filmsList, new ShowMoreComponent().getElement(), RenderPosition.BEFOREEND); // Отрисовка кнопки "Показать больше"
 
   const filmListShowMore = filmsList.querySelector(`.films-list__show-more`);
 
@@ -63,38 +77,16 @@ const renderFilmCardGalery = (sortCardArray) => {
     const prevRenderCount = renderCardCount;
     renderCardCount += CARD_RENDER_COUNT_BY_BUTTON;
 
-    sortCardArray.slice(prevRenderCount, renderCardCount).forEach((card) => render(filmsListContainer, createFilmCardTemplate(card)));
+    renderCards(cardsArray.slice(0, prevRenderCount), filmsListContainer);
 
-    if (renderCardCount >= sortCardArray.length) {
+    if (renderCardCount >= cardsArray.length) {
       filmListShowMore.remove();
     }
   });
 };
 
-renderFilmCardGalery(filnCardsSortByDefault);
+renderFilmCardGalery(filmCardsSortByDefault);
 
-filmCardsSortByRating.slice(0, TOP_RATED_CARD_RENDER_COUNT).forEach((card) => render(filmsListContainerTopRated, createFilmCardTemplate(card)));
+renderCards(filmCardsSortByRating.slice(0, TOP_RATED_CARD_RENDER_COUNT), filmsListContainerTopRated);
 
-filmCardsSortByComments.slice(0, MOST_COMMENTED_CARD_RENDER_COUNT).forEach((card) => render(filmsListContainerMostCommented, createFilmCardTemplate(card)));
-
-const filmCardPoster = filmsList.querySelector(`.film-card__poster`);
-
-filmCardPoster.addEventListener(`click`, () => {
-  render(body, createFilmDetailsTemplate(filnCardsSortByDefault[0])); // Отрисовка попапа с детальным описанием фильма
-
-  const filmDetails = body.querySelector(`.film-details`);
-  const filmDetailsCommentsList = filmDetails.querySelector(`.film-details__comments-list`);
-
-  filnCardsSortByDefault[0].comments.slice(0, filnCardsSortByDefault[0].comments.length).forEach((comment) => render(filmDetailsCommentsList, createComment(comment)));
-
-
-  const filmDetailsCloseBtn = body.querySelector(`.film-details__close-btn`);
-
-  filmDetailsCloseBtn.addEventListener(`click`, () => {
-    filmDetails.remove();
-  }
-  );
-}
-);
-
-
+renderCards(filmCardsSortByComments.slice(0, MOST_COMMENTED_CARD_RENDER_COUNT), filmsListContainerMostCommented);

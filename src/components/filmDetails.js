@@ -1,93 +1,108 @@
-const creteFilmDetailsControl = () => {
-  return (
-    `<section class="film-details__controls">
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-      <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+import {createElement} from '../utils.js';
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
-      <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+const createFilmDetailsTemplate = (filmCard) => {
+  const createNoCommentsBlock = () => {
+    return (
+      `<ul class="film-details__comments-list"></ul>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-      <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+      <div class="film-details__new-comment">
+        <div for="add-emoji" class="film-details__add-emoji-label">
+          <img src="images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
+        </div>
+
+        <label class="film-details__comment-label">
+          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">Great movie!</textarea>
+        </label>
+
+        <div class="film-details__emoji-list">
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" checked>
+          <label class="film-details__emoji-label" for="emoji-smile">
+            <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
+          </label>
+
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+          <label class="film-details__emoji-label" for="emoji-sleeping">
+            <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
+          </label>
+
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+          <label class="film-details__emoji-label" for="emoji-puke">
+            <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
+          </label>
+
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
+          <label class="film-details__emoji-label" for="emoji-angry">
+            <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
+          </label>
+        </div>
+      </div>`
+    );
+  };
+
+  const createCommentsBlock = () => {
+
+    let comments = [];
+
+    const createComments = () => {
+
+      for (let i = 0; i < filmCard.comments.length; i++) {
+        let comment;
+        comment = `<li class="film-details__comment">
+                    <span class="film-details__comment-emoji">
+                      <img src="./images/emoji/${filmCard.comments[i].emoji}" width="55" height="55" alt="emoji-sleeping">
+                    </span>
+                    <div>
+                      <p class="film-details__comment-text">${filmCard.comments[i].text}</p>
+                      <p class="film-details__comment-info">
+                        <span class="film-details__comment-author">${filmCard.comments[i].name} Doe</span>
+                        <span class="film-details__comment-day">${filmCard.comments[i].date} days ago</span>
+                        <button class="film-details__comment-delete">Delete</button>
+                      </p>
+                    </div>
+                  </li>`;
+        comments.push(comment);
+      }
+      return comments;
+    };
+
+    createComments();
+
+    return (
+      `<ul class="film-details__comments-list">
+      ${comments.join(``)}
+      </ul>
+      <div class="film-details__new-comment">
+        <div for="add-emoji" class="film-details__add-emoji-label"></div>
+
+        <label class="film-details__comment-label">
+          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+        </label>
+
+        <div class="film-details__emoji-list">
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
+          <label class="film-details__emoji-label" for="emoji-smile">
+            <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
+          </label>
+
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+          <label class="film-details__emoji-label" for="emoji-sleeping">
+            <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
+          </label>
+
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+          <label class="film-details__emoji-label" for="emoji-puke">
+            <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
+          </label>
+
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
+          <label class="film-details__emoji-label" for="emoji-angry">
+            <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
+          </label>
+        </div>
+      </div>
     </section>`
-  );
-};
-
-const createNoCommentsBlock = () => {
-  return (
-    `<ul class="film-details__comments-list"></ul>
-
-    <div class="film-details__new-comment">
-      <div for="add-emoji" class="film-details__add-emoji-label">
-        <img src="images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
-      </div>
-
-      <label class="film-details__comment-label">
-        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">Great movie!</textarea>
-      </label>
-
-      <div class="film-details__emoji-list">
-        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" checked>
-        <label class="film-details__emoji-label" for="emoji-smile">
-          <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-        </label>
-
-        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-        <label class="film-details__emoji-label" for="emoji-sleeping">
-          <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-        </label>
-
-        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-        <label class="film-details__emoji-label" for="emoji-puke">
-          <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-        </label>
-
-        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-        <label class="film-details__emoji-label" for="emoji-angry">
-          <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-        </label>
-      </div>
-    </div>`
-  );
-};
-
-const createCommentsBlock = () => {
-  return (
-    `<ul class="film-details__comments-list"></ul>
-    <div class="film-details__new-comment">
-      <div for="add-emoji" class="film-details__add-emoji-label"></div>
-
-      <label class="film-details__comment-label">
-        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-      </label>
-
-      <div class="film-details__emoji-list">
-        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-        <label class="film-details__emoji-label" for="emoji-smile">
-          <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-        </label>
-
-        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-        <label class="film-details__emoji-label" for="emoji-sleeping">
-          <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-        </label>
-
-        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-        <label class="film-details__emoji-label" for="emoji-puke">
-          <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-        </label>
-
-        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-        <label class="film-details__emoji-label" for="emoji-angry">
-          <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-        </label>
-      </div>
-    </div>
-  </section>`
-  );
-};
-
-export const createFilmDetailsTemplate = (filmCard) => {
+    );
+  };
 
   let gentres = [];
 
@@ -102,7 +117,6 @@ export const createFilmDetailsTemplate = (filmCard) => {
 
   createGentre();
 
-  const filmDetailsControl = creteFilmDetailsControl();
   const noCommentsBlock = createNoCommentsBlock();
   const commentsBlock = createCommentsBlock();
 
@@ -169,7 +183,16 @@ export const createFilmDetailsTemplate = (filmCard) => {
               </p>
             </div>
           </div>
-          ${filmDetailsControl}
+          <section class="film-details__controls">
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+            <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+            <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+            <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+          </section>
         </div>
 
         <div class="form-details__bottom-container">
@@ -182,3 +205,28 @@ export const createFilmDetailsTemplate = (filmCard) => {
     </section>`
   );
 };
+
+export default class FilmDetailsComponent {
+  constructor(filmCard) {
+    this._filmCard = filmCard;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmDetailsTemplate(this._filmCard);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element.remove();
+  }
+}
+

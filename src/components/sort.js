@@ -1,3 +1,5 @@
+import {createElement} from '../utils.js';
+
 const createNavigationItem = (sortItem, isActive) => {
   const {name, href} = sortItem;
   return (
@@ -5,7 +7,7 @@ const createNavigationItem = (sortItem, isActive) => {
   );
 };
 
-export const createSortTemplate = (items) => {
+const createSortTemplate = (items) => {
   const sortItems = items.map((it, i) => createNavigationItem(it, i === 0)).join(`\n`);
   return (
     `<ul class="sort">
@@ -13,3 +15,27 @@ export const createSortTemplate = (items) => {
     </ul>`
   );
 };
+
+export default class SortComponent {
+  constructor(items) {
+    this._items = items;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createSortTemplate(this._items);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
