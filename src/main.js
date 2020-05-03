@@ -11,8 +11,7 @@ import SortComponent from './components/sort.js';
 import FilmsComponent from './components/films.js';
 import FilmCardComponent from './components/filmCard.js';
 import ShowMoreComponent from './components/showMore.js';
-// import FilmDetailsComponent from './components/filmDetails.js';
-// import CommentComponent from './components/comment.js';
+import FilmDetailsComponent from './components/filmDetails.js';
 
 // Моки
 import {generateNavigation} from './mock/generateNavigationItems.js';
@@ -27,7 +26,7 @@ const navigationItems = generateNavigation();
 const sortItems = generateSortItems();
 const userProfile = generateUserProfile();
 const filmCards = generateFilmCards(CARD_RENDER_COUNT);
-const filnCardsSortByDefault = filmCards.slice();
+const filmCardsSortByDefault = filmCards.slice();
 const filmCardsSortByRating = filmCards.sort((a, b) => b.rating - a.rating).slice();
 const filmCardsSortByComments = filmCards.sort((a, b) => b.comments.length - a.comments.length).slice();
 
@@ -47,11 +46,28 @@ const filmsListExtra = films.querySelectorAll(`.films-list--extra`);
 const filmsListContainerTopRated = filmsListExtra[0].querySelector(`.films-list__container`);
 const filmsListContainerMostCommented = filmsListExtra[1].querySelector(`.films-list__container`);
 
-const renderFilmCardGalery = (sortCardArray) => {
+const renderCards = (cardsArray, container) => {
+  cardsArray.forEach((card) => {
+    const cardComponent = new FilmCardComponent(card);
+    const detailsComponent = new FilmDetailsComponent(card);
+
+    render(container, cardComponent.getElement(), RenderPosition.BEFOREEND); // Отрисовка карточек из массива
+
+    cardComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, () => {
+      render(body, detailsComponent.getElement(), RenderPosition.BEFOREEND); // Отрисовка попапа с детальным описанием фильма
+    });
+
+    detailsComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, () => {
+      detailsComponent.removeElement(); // Удаление попапа
+    });
+  });
+};
+
+const renderFilmCardGalery = (cardsArray) => {
 
   let renderCardCount = CARD_RENDER_COUNT_ON_START;
 
-  sortCardArray.slice(0, renderCardCount).forEach((card) => render(filmsListContainer, new FilmCardComponent(card).getElement(), RenderPosition.BEFOREEND)); // Отрисовка карточек с фильмами
+  renderCards(cardsArray.slice(0, renderCardCount), filmsListContainer);
 
   render(filmsList, new ShowMoreComponent().getElement(), RenderPosition.BEFOREEND); // Отрисовка кнопки "Показать больше"
 
@@ -61,35 +77,16 @@ const renderFilmCardGalery = (sortCardArray) => {
     const prevRenderCount = renderCardCount;
     renderCardCount += CARD_RENDER_COUNT_BY_BUTTON;
 
-    sortCardArray.slice(prevRenderCount, renderCardCount).forEach((card) => render(filmsListContainer, new FilmCardComponent(card).getElement(), RenderPosition.BEFOREEND));
+    renderCards(cardsArray.slice(0, prevRenderCount), filmsListContainer);
 
-    if (renderCardCount >= sortCardArray.length) {
+    if (renderCardCount >= cardsArray.length) {
       filmListShowMore.remove();
     }
   });
 };
 
-renderFilmCardGalery(filnCardsSortByDefault);
+renderFilmCardGalery(filmCardsSortByDefault);
 
-filmCardsSortByRating.slice(0, TOP_RATED_CARD_RENDER_COUNT).forEach((card) => render(filmsListContainerTopRated, new FilmCardComponent(card).getElement(), RenderPosition.BEFOREEND));
+renderCards(filmCardsSortByRating.slice(0, TOP_RATED_CARD_RENDER_COUNT), filmsListContainerTopRated);
 
-filmCardsSortByComments.slice(0, MOST_COMMENTED_CARD_RENDER_COUNT).forEach((card) => render(filmsListContainerMostCommented, new FilmCardComponent(card).getElement(), RenderPosition.BEFOREEND));
-
-// const filmCardPosters = filmsList.querySelectorAll(`.film-card__poster`);
-
-// const renderfilmDetails = () => {
-//   render(body, new FilmDetailsComponent(filnCardsSortByDefault[0]).getElement(), RenderPosition.BEFOREEND); // Отрисовка попапа с детальным описанием фильма
-
-//   const filmDetails = body.querySelector(`.film-details`);
-//   const filmDetailsCommentsList = filmDetails.querySelector(`.film-details__comments-list`);
-
-//   filnCardsSortByDefault[0].comments.slice(0, filnCardsSortByDefault[0].comments.length).forEach((comment) => render(filmDetailsCommentsList, new CommentComponent(comment).getElement(), RenderPosition.BEFOREEND));
-
-
-//   const filmDetailsCloseBtn = body.querySelector(`.film-details__close-btn`);
-
-//   filmDetailsCloseBtn.addEventListener(`click`, () => {
-//     filmDetails.remove();
-//   }
-//   );
-// };
+renderCards(filmCardsSortByComments.slice(0, MOST_COMMENTED_CARD_RENDER_COUNT), filmsListContainerMostCommented);
