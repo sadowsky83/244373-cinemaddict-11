@@ -11,11 +11,10 @@ import PopupController from "../controllers/popup.js";
 // Утилки
 import {render, remove, RenderPosition} from '../utils/render.js';
 
-
 const renderGallery = (container, cardsArray) => {
 
-  const renderCards = () => {
-    cardsArray.forEach((card) => {
+  const renderCards = (cards) => {
+    cards.forEach((card) => {
       const cardComponent = new FilmCardComponent(card);
 
       render(container, cardComponent, RenderPosition.BEFOREEND); // Отрисовка карточек из массива
@@ -35,7 +34,7 @@ const renderGallery = (container, cardsArray) => {
 
     const filmListShowMore = new ShowMoreComponent();
 
-    render(container, filmListShowMore, RenderPosition.BEFOREEND); // Отрисовка кнопки "Показать больше"
+    render(container.parentNode, filmListShowMore, RenderPosition.BEFOREEND); // Отрисовка кнопки "Показать больше"
 
     filmListShowMore.setClickHandler(() => {
 

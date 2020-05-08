@@ -10,16 +10,27 @@ import {render, RenderPosition} from '../utils/render.js';
 
 const renderExtraGallery = (container, cardsArray) => {
 
-  cardsArray.forEach((card) => {
-    const cardComponent = new FilmCardComponent(card);
+  const renderCards = (cards) => {
+    cards.forEach((card) => {
+      const cardComponent = new FilmCardComponent(card);
 
-    render(cardsArray.slice(0, CARD_RENDER_COUNT), container, RenderPosition.BEFOREEND); // Отрисовка карточек из массива
+      render(container, cardComponent, RenderPosition.BEFOREEND); // Отрисовка карточек из массива
 
-    cardComponent.setClickHandler(() => {
-      const popupController = new PopupController(card);
-      popupController.render(card);
+      cardComponent.setClickHandler(() => {
+        const popupController = new PopupController(card);
+        popupController.render(card);
+      });
     });
-  });
+  };
+
+  const renderFilmCardGalery = () => {
+
+    let renderCardCount = CARD_RENDER_COUNT;
+
+    renderCards(cardsArray.slice(0, renderCardCount), container); // Отрисовка основной галлереи
+  };
+
+  renderFilmCardGalery();
 };
 
 export default class ExtralleryController {

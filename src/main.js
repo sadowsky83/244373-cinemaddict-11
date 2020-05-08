@@ -43,12 +43,10 @@ const filmsListContainerTopRated = filmsListExtra[0].querySelector(`.films-list_
 const filmsListContainerMostCommented = filmsListExtra[1].querySelector(`.films-list__container`);
 
 const galleryController = new GalleryController(filmsListContainer, filmCardsSortByDefault);
-galleryController.render(filmsListContainer, filmCardsSortByDefault);
+galleryController.render(filmCardsSortByDefault);
 
 const topRatedGaleryController = new ExtralleryController(filmsListContainerTopRated, filmCardsSortByRating);
-topRatedGaleryController.render(filmsListContainer, filmCardsSortByDefault);
+topRatedGaleryController.render(filmCardsSortByRating);
 
 const topCommentedGaleryController = new ExtralleryController(filmsListContainerMostCommented, filmCardsSortByComments);
-topCommentedGaleryController.render(filmsListContainer, filmCardsSortByDefault);
-
-
+topCommentedGaleryController.render(filmCardsSortByComments);

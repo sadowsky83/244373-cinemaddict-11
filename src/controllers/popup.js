@@ -8,9 +8,6 @@ const popupRender = (card) => {
   const body = document.querySelector(`body`);
   const detailsComponent = new FilmDetailsComponent(card);
 
-  render(body, detailsComponent, RenderPosition.BEFOREEND); // Отрисовка попапа с детальным описанием фильма
-  document.addEventListener(`keydown`, onEscKeyDown);
-
   const onEscKeyDown = (evt) => {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
@@ -19,6 +16,9 @@ const popupRender = (card) => {
       document.removeEventListener(`keydown`, onEscKeyDown);
     }
   };
+
+  render(body, detailsComponent, RenderPosition.BEFOREEND); // Отрисовка попапа с детальным описанием фильма
+  document.addEventListener(`keydown`, onEscKeyDown);
 
   detailsComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, () => {
     remove(detailsComponent); // Удаление попапа
