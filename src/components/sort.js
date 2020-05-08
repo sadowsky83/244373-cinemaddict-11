@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstractComponent.js';
 
 const createNavigationItem = (sortItem, isActive) => {
   const {name, href} = sortItem;
@@ -16,26 +16,14 @@ const createSortTemplate = (items) => {
   );
 };
 
-export default class SortComponent {
+export default class SortComponent extends AbstractComponent {
   constructor(items) {
-    this._items = items;
+    super();
 
-    this._element = null;
+    this._items = items;
   }
 
   getTemplate() {
     return createSortTemplate(this._items);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
